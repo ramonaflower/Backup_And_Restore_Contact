@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <TextView
+            android:id="@+id/tv_total_contact"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/_20ssp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text="Total : 21 contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <Button
+            android:id="@+id/btn_backup"
+            android:textAllCaps="false"
+            android:text="Backup"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_50sdp" />
+    </LinearLayout>
+</LinearLayout>

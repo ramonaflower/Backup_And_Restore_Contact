@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BackupAndRestoreContact</string>
+    <string name="total_contact_count">Total : %1$d contacts</string>
+</resources>
