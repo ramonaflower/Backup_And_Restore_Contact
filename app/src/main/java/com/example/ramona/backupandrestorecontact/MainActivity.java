@@ -37,9 +37,14 @@ public class MainActivity extends AppCompatActivity {
         initControl();
         initData();
         initEvent();
+        int count;
         mVFile = "Contacts" + "_" + System.currentTimeMillis() + ".vcf";
         mCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-        int count = mCursor.getCount();
+        if (mCursor.getCount() != 0) {
+            count = mCursor.getCount();
+        } else {
+            count = 0;
+        }
         mTotalContact.setText(getString(R.string.total_contact_count, count));
         checkPermissionWriteContact();
     }
@@ -73,10 +78,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkPermissionWriteContact() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            getVCF();
-        } else {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                            Manifest.permission.READ_CONTACTS,
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                } else {
+                    getVCF();
+                }
+            }
         }
     }
 
@@ -111,12 +123,25 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+        switch (requestCode) {
             case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getVCF();
-                } else {
-                    Toast.makeText(this, "Permission Denied !", Toast.LENGTH_SHORT).show();
+                if (grantResults.length > 0) {
+                    boolean readContact = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean readExternalStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean writeExternalStorage = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    if (readContact) {
+                        if (readExternalStorage) {
+                            if (writeExternalStorage) {
+                                getVCF();
+                            } else {
+                                Toast.makeText(this, "Write External Storage permission denied!", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(this, "Read External Storage permission denied!", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "Read contacts permission denied!", Toast.LENGTH_SHORT).show();
+                    }
                 }
         }
     }
